@@ -17,8 +17,8 @@ def parse_instance(file_name, instance_name):
         line_content=lines[skip_line+i].strip().split()
         job_data_copy=[]
         for j in range(0, len(line_content),2):
-            machine=line_content[j]
-            time=line_content[j+1]
+            machine=int(line_content[j])
+            time=int(line_content[j+1])
             job_data_copy.append((machine,time))
         jobs_data.append(job_data_copy)
     return jobs_data
