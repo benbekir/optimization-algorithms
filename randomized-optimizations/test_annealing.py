@@ -1,4 +1,4 @@
-from jobshop_population_based import*
+from jobshop_trajectory_based import*
 import matplotlib.pyplot as plt
 INSTANCE_NAME = "abz6"
 FILENAME = "jobshop.txt"
