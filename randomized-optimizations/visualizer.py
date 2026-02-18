@@ -6,8 +6,7 @@ def plot_schedule(data):
     cmap = colormaps.get_cmap('tab20')
     for m_idx, machine_tasks in enumerate(data):
         for task in machine_tasks:
-            ax.broken_barh([(task.offset, task.duration)]
-, (m_idx - 0.4, 0.8), 
+            ax.broken_barh([(task.offset, task.duration)], (m_idx - 0.4, 0.8), 
                             facecolors=cmap(task.job_index % 20), edgecolor='black', linewidth=1) 
             ax.text(task.offset + task.duration/2, m_idx, f'J{task.job_index}({task.task_index})', 
                     ha='center', va='center', color='black', fontsize=9) 
