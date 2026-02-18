@@ -1,8 +1,8 @@
 from jobshop_trajectory_based import*
 import matplotlib.pyplot as plt
-INSTANCE_NAME = "abz6"
+INSTANCE_NAME = "abz9"
 FILENAME = "jobshop.txt"
-ITERATIONS=50000
+ITERATIONS=100000
 def run_test():
     try:
         num_jobs, num_machines, data = parse_instance(FILENAME, INSTANCE_NAME)
@@ -18,26 +18,24 @@ def run_test():
     print(f"Initial Random Makespan: {random_makespan}")
 
     start_time = time.time()
-    
-    best_m, best_s,history_best_makespan,history_current_makespan = simulate_annealing(data, num_machines, num_jobs,ITERATIONS)
-    
+    best_makespan, best_sequence,history_best_makespan,history_current_makespan = simulate_annealing(data, num_machines, num_jobs,ITERATIONS)
     end_time = time.time()
     duration = end_time - start_time
 
     print("\n--- Results ---")
-    print(f"Best Makespan Found: {best_m}")
-    print(f"Improvement: {random_makespan - best_m} units")
+    print(f"Best Makespan Found: {best_makespan}")
+    print(f"Improvement: {random_makespan - best_makespan} units")
     print(f"Time Taken: {duration:.4f} seconds")
-    # Create the plot
-    plt.figure(figsize=(10, 6))
-    plt.plot(history_current_makespan, label='Current Makespan (Exploration)', alpha=0.3, color='blue')
-    plt.plot(history_best_makespan, label='Best Makespan (Optimization)', color='red', linewidth=2)
-
-    plt.title('Simulated Annealing Evolution for abz6')
-    plt.xlabel('Iteration')
-    plt.ylabel('Makespan')
-    plt.legend()
-    plt.grid(True)
-    plt.savefig('annealing_evolution.png') # Saves the image to your folder
+    plt.figure(figsize=(12, 6))
+    plt.plot(history_current_makespan, label='$f(x_{new})$: Trajectory', color='#3498db', alpha=0.4, linewidth=0.7)
+    
+    plt.plot(history_best_makespan, label='Best $f(x)$: Optimal Path', color='#e74c3c', linewidth=2)
+    plt.title('Simulated Annealing: Minimization Move Analysis', fontsize=15, pad=20)
+    plt.xlabel('Iterations ($x$)', fontsize=12)
+    plt.ylabel('Makespan $f(x)$', fontsize=12)
+    
+    plt.legend(loc='upper right')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.show()
     
 run_test()
