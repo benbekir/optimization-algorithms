@@ -1,7 +1,7 @@
 from enum import Enum
 from dataclasses import dataclass
-from dataloader import parse_instance
-from visualizer import plot_schedule
+from helpers.dataloader import parse_instance
+from helpers.visualizer import plot_schedule
 import random
 
 class Strategy(Enum):
