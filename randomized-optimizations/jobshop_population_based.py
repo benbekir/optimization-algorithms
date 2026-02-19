@@ -135,8 +135,8 @@ def solve(strategy: Strategy, m, l, max_generations, num_machines, num_jobs, dat
 if __name__ == "__main__":
     m = 5
     l = 15
-    max_gens = 100
+    max_gens = 25
 
-    num_machines, num_jobs, data = parse_instance("jobshop.txt", "abz6")
+    num_machines, num_jobs, data = parse_instance("jobshop_hackathon_instance.txt", "a")
     candidate = solve(Strategy.PLUS, m, l, max_gens, num_machines, num_jobs, data)
     plot_schedule(candidate.schedule)
