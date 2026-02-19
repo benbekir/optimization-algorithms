@@ -1,7 +1,7 @@
 from jobshop_trajectory_based import*
 import matplotlib.pyplot as plt
-INSTANCE_NAME = "abz9"
-FILENAME = "jobshop.txt"
+INSTANCE_NAME = "a"
+FILENAME = "jobshop_hackathon_instance.txt"
 ITERATIONS=100000
 def run_test():
     try:
@@ -26,6 +26,8 @@ def run_test():
     print(f"Best Makespan Found: {best_makespan}")
     print(f"Improvement: {random_makespan - best_makespan} units")
     print(f"Time Taken: {duration:.4f} seconds")
+    print(f"Sequence: {best_sequence}")
+
     plt.figure(figsize=(12, 6))
     plt.plot(history_current_makespan, label='$f(x_{new})$: Trajectory', color='#3498db', alpha=0.4, linewidth=0.7)
     

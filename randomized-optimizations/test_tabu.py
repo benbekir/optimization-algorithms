@@ -1,8 +1,8 @@
 from jobshop_trajectory_based import*
 import matplotlib.pyplot as plt
 def run_tabu_test():
-    INSTANCE_NAME = "abz7"
-    FILENAME = "jobshop.txt"
+    INSTANCE_NAME = "a"
+    FILENAME = "jobshop_hackathon_instance.txt"
     ITERATIONS = 5000
     TABU_SIZE = 30
 
