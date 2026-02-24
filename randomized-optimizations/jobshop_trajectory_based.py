@@ -1,34 +1,13 @@
-import re
 import random
-import time
 import math
-def parse_instance(file_name, instance_name):
-    with open(file_name,'r') as f:
-        lines=f.readlines()
-    start_idx=-1
-    for i,line in enumerate(lines):
-       if f"instance {instance_name}" in line.strip():
-           start_idx=i
-           break
-    if start_idx == -1:
-        raise ValueError(f"Instance {instance_name} not found in file {file_name}.")
-    skip_line=start_idx+4
-    num_jobs,num_machines=map(int, lines[skip_line].split())
-    jobs_data=[]
-    for i in range(1, num_jobs+1):
-        line_content=lines[skip_line+i].strip().split()
-        job_data_copy=[]
-        for j in range(0, len(line_content),2):
-            machine=int(line_content[j])
-            time=int(line_content[j+1])
-            job_data_copy.append((machine,time))
-        jobs_data.append(job_data_copy)
-    return num_machines, num_jobs,jobs_data
-         
- #This is the function that calculates the makespan
- #We basically take the current operation from our sequence and see what machine is assigned to it and what is the machine's time to do that operation
- #The start time for the free machine is when the machine finishes its job and when the job is free to move on to the next step
- #After iterating through the whole steps of the sequence we return the biggest value of machine_free_time. The reason is, that the sequnce ends when the biggest time ends.
+import matplotlib.pyplot as plt
+import time
+from helpers.dataloader import parse_instance
+
+#This is the function that calculates the makespan
+#We basically take the current operation from our sequence and see what machine is assigned to it and what is the machine's time to do that operation
+#The start time for the free machine is when the machine finishes its job and when the job is free to move on to the next step
+#After iterating through the whole steps of the sequence we return the biggest value of machine_free_time. The reason is, that the sequnce ends when the biggest time ends.
 def calculate_makespan(sequence, num_machines, num_jobs, data):
     machine_free_time=[0]*num_machines
     job_op_index_next_time=[0]*num_jobs
@@ -123,3 +102,77 @@ def tabu_search(data, num_machines, num_jobs,Iterations, tabu_size):
         history_best_makespan.append(best_makespan)
         history_current_makespan.append(current_makespan)
     return best_makespan,best_seq,history_best_makespan,history_current_makespan
+
+def run_test(filename, instance_name, iterations):
+    try:
+        num_jobs, num_machines, data = parse_instance(filename, instance_name)
+    except Exception as e:
+        print(f"Error loading file: {e}")
+        return
+
+    print(f"--- Testing Simulated Annealing on {instance_name} ---")
+    print(f"Jobs: {num_jobs}, Machines: {num_machines}")
+    
+    random_seq = initialize_sequence(num_machines, num_jobs)
+    random_makespan = calculate_makespan(random_seq, num_machines, num_jobs, data)
+    print(f"Initial Random Makespan: {random_makespan}")
+
+    start_time = time.time()
+    best_makespan, best_sequence,history_best_makespan,history_current_makespan = simulate_annealing(data, num_machines, num_jobs, iterations)
+    end_time = time.time()
+    duration = end_time - start_time
+
+    print("\n--- Results ---")
+    print(f"Best Makespan Found: {best_makespan}")
+    print(f"Improvement: {random_makespan - best_makespan} units")
+    print(f"Time Taken: {duration:.4f} seconds")
+    print(f"Sequence: {best_sequence}")
+
+    plt.figure(figsize=(12, 6))
+    plt.plot(history_current_makespan, label='$f(x_{new})$: Trajectory', color='#3498db', alpha=0.4, linewidth=0.7)
+    
+    plt.plot(history_best_makespan, label='Best $f(x)$: Optimal Path', color='#e74c3c', linewidth=2)
+    plt.title('Simulated Annealing: Minimization Move Analysis', fontsize=15, pad=20)
+    plt.xlabel('Iterations ($x$)', fontsize=12)
+    plt.ylabel('Makespan $f(x)$', fontsize=12)
+    
+    plt.legend(loc='upper right')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.show()
+
+def run_tabu_test(filename, instance_name, iterations, tabu_size):
+    try:
+        num_jobs, num_machines, data = parse_instance(filename, instance_name)
+    except Exception as e:
+        print(f"Error: {e}")
+        return
+
+    print(f"--- Testing Tabu Search on {instance_name} ---")
+    
+    start_time = time.time()
+    best_makespan, best_sequence, history_best_makespan, history_current_makespan = tabu_search(data, num_machines, num_jobs, iterations, tabu_size)
+    duration = time.time() - start_time
+    print(f"Best Makespan: {best_makespan}")
+    print(f"Time: {duration:.2f}s")
+   
+    plt.figure(figsize=(12, 6))
+    plt.plot(history_current_makespan, label='Current $f(x)$ (Tabu Trajectory)', color='blue', alpha=0.5)
+    plt.plot(history_best_makespan, label='Best $f(x)$', color='#e74c3c', linewidth=2)
+    plt.title(f'Tabu Search Optimization: {instance_name}')
+    plt.xlabel('Iteration')
+    plt.ylabel('Makespan')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.show()
+
+if __name__ == "__main__":
+    # test annealing
+    filename = "jobshop_hackathon_instance.txt"
+    instance_name = "a"
+    iterations = 100000
+    run_test(filename, instance_name, iterations)
+
+    # test tabu
+    tabu_iterations = 5000
+    tabu_size = 30
+    run_tabu_test(filename, instance_name, tabu_iterations, tabu_size)
